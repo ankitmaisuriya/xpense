@@ -4,18 +4,26 @@ import '../main.dart';
 import '../screens/add_expense_screen.dart';
 
 class ExpenseTile extends StatelessWidget {
-  final Expense expense;
+  final ExpenseWithCategory data;
 
-  ExpenseTile(this.expense);
+  ExpenseTile(this.data);
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(expense.title, style: TextStyle(fontSize: 18)),
-      subtitle: Text(
-        "${expense.date.day}/${expense.date.month}/${expense.date.year}",
+      title: Text(
+        data.expense.title,
+        style: TextStyle(fontSize: 18),
       ),
-      trailing: Text("₹${expense.amount}", style: TextStyle(fontSize: 17)),
+      subtitle: Text(
+        "Category: ${data.category?.name ?? 'No Category'}\n"
+            "${data.expense.date.day}/${data.expense.date.month}/${data.expense.date.year}",
+      ),
+      trailing: Text(
+        "₹${data.expense.amount}",
+        style: TextStyle(fontSize: 17),
+      ),
+
       onLongPress: () {
         showModalBottomSheet(
           context: context,
@@ -30,7 +38,7 @@ class ExpenseTile extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => AddExpenseScreen(expense: expense),
+                      builder: (_) => AddExpenseScreen(expense: data.expense),
                     ),
                   );
                 },
@@ -39,7 +47,7 @@ class ExpenseTile extends StatelessWidget {
                 leading: Icon(Icons.delete),
                 title: Text("Delete"),
                 onTap: () async {
-                  await db.deleteExpense(expense.id);
+                  await db.deleteExpense(data.expense.id);
                   Navigator.pop(context);
                 },
               ),
