@@ -69,13 +69,14 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
           ),
-          FutureBuilder<double>(
-            future: totalExpenseFuture,
+          StreamBuilder<List<Expense>>(
+            stream: db.watchTotalExpenses(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return const Center(child: CircularProgressIndicator());
               }
-
+              var items = snapshot.data!;
+              var total = items.fold<double>(0,(previousValue, element) => previousValue + element.amount,);
               return Padding(
                 padding: const EdgeInsets.all(12),
                 child: Card(
@@ -83,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Text(
-                      "Total Expense: ₹ ${snapshot.data!.toStringAsFixed(2)}",
+                      "Total Expense: \$ ${total.toStringAsFixed(2)}",
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,

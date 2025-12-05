@@ -14,6 +14,8 @@ class AppDatabase extends _$AppDatabase {
   @override
   int get schemaVersion => 1;
 
+
+
   // Run only on first database creation
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -88,6 +90,12 @@ class AppDatabase extends _$AppDatabase {
         .watch();
   }
 
+  Stream<List<Expense>> watchTotalExpenses() {
+    return (select(expenses)
+      ..orderBy([(t) => OrderingTerm.desc(t.date)]))
+        .watch();
+  }
+
   Future<double> getTotalByCategory(int categoryId) async {
     final result = await customSelect(
       'SELECT SUM(amount) AS total FROM expenses WHERE category_id = ?',
@@ -140,8 +148,6 @@ class AppDatabase extends _$AppDatabase {
   //   final result = await query.map((row) => row.read(sumExp) ?? 0).getSingle();
   //   return result;
   // }
-
-
 }
 
 // ----------------------------- DATABASE OPENING -------------------------------
